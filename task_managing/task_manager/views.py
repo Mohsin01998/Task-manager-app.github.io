@@ -1,12 +1,61 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import NewUserForm
+from .forms import NewUserForm, CreateTask
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.decorators import login_required
+from .models import Task
+
 # Create your views here.
+@login_required(login_url='login')
+def DeleteTask(request,pk):
+    if request.method=='POST':
+        task=Task.objects.get(id=pk)
+        task.delete()
+        return redirect('view_task')
+    task = Task.objects.get(id=pk)
+    context={'task':task}
+    return render(request,'delete_task.html',context=context)
 
 
+@login_required(login_url='login')
+def UpdateTask(request,pk):
+    if request.method=='POST':
+        task = Task.objects.get(id=pk)
+        form = CreateTask(request.POST,instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    task=Task.objects.get(id=pk)
+    form=CreateTask(instance=task)
+    context={'form':form}
+    return render(request,'update_task.html',context=context)
+
+    context={'task':task}
+    return render(request,'view_task.html',context=context)
+
+@login_required(login_url='login')
+def ViewTask(request):
+    current_user=request.user.id
+    task=Task.objects.all().filter(user=current_user)
+    context={'task':task}
+    return render(request,'view_task.html',context=context)
+
+@login_required(login_url='login')
+def NewTask(request):
+    if request.method=='POST':
+        form=CreateTask(request.POST)
+        if form.is_valid():
+            task=form.save(commit=False)
+            task.user=request.user
+            task.save()
+            return redirect("dashboard")
+    form=CreateTask()
+    context={'form':form}
+    return render(request,'create_task.html',context=context)
+
+@login_required(login_url='login')
 def dashboard(request):
     return render(request,'dashboard.html')
 
