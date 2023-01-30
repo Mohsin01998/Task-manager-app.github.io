@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <title>Taskly|login</title>
+    <title>Taskly|Create Task</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"/>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
@@ -13,31 +13,21 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
 </head>
-{% include 'base.html' %}
+{% include 'dashboard_base.html' %}
 <body>
 
 <br>
 <div class="container bg-white shadow-md p-5 form-layout">
-    <h3>This is Login Page </h3>
+    <h2>This is Create Task </h2>
     <hr>
     <br>
     <form method="POST">
         {% csrf_token %}
-        {{form.username|as_crispy_field}}
+      <p>Are you sure to delete this task ? </p>
+        <a href="{% url 'dashboard' %}"> Go back </a>
         <br><br>
-         {{form.password|as_crispy_field}}
-        <br><br>
-        {% for message in messages %}
-            {% if message.level == DEFAULT_MESSAGE_LEVEL.SUCCESS %}
-                <p class="alert alert-success float-center text-center message-text">{{message}}</p>
-            {% endif %}
-        {% endfor %}
-        <button class="btn btn-primary" type="submit">Login</button>
-        <br><br>
-        <p>Dont, you have have an account? </p>
-        <a href="{% url 'register' %}">Register</a>
+      <button class="btn btn-primary" type="submit"> Delete Users </button>
     </form>
-
 </div>
 </body>
 </html>

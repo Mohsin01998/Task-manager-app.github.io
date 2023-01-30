@@ -16,12 +16,12 @@
 </head>
 
 <body>
-{% include 'base.html' %}
+{% include 'dashboard_base.html' %}
 
 <br>
 
 <div class="container bg-white shadow-md p-5 form-layout">
-    <h2>This is Registration Page </h2>
+    <h2>This is Profile Update Page </h2>
     <hr>
     <br>
     <form method="POST">
@@ -30,15 +30,20 @@
         <br><br>
         {{ form.email|as_crispy_field }}
         <br><br>
-        {{ form.password1|as_crispy_field }}
+        <button class="btn btn-primary" type="submit"> Update Profile </button>
         <br><br>
-        {{ form.password2|as_crispy_field }}
-        <br><br>
-        <button class="btn btn-primary" type="submit">Register</button>
-        <br><br>
-        <p>Already,have an account? </p>
-        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'dashboard' %}">Go Back</a>
+
     </form>
 </div>
+<br><br>
+<div class="container bg-white shadow-md p-5 form-layout" style=top-margin:20px>
+    <h2 > Delete Account </h2>
+    <hr>
+    <br>
+    <a class="btn btn-danger" href="{% url 'delete_user' %}"> Delete Account </a>
+
+</div>
+<br>
 </body>
 </html>

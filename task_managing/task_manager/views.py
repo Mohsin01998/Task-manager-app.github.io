@@ -1,13 +1,37 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import NewUserForm, CreateTask
+from .forms import NewUserForm, CreateTask, UpdateUser
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Task
+from .models import Task, Profile
+from django.contrib.auth.models import User
 
 # Create your views here.
+
+@login_required(login_url='login')
+def delete_user(request):
+    if request.method=='POST':
+        user=User.objects.get(id=request.user.id)
+        user.delete()
+        return redirect('dashboard')
+    user = User.objects.get(id=request.user.id)
+    context={'form':user}
+    return render(request,'delete_user.html',context=context)
+
+@login_required(login_url='login')
+def profile_update(request):
+    if request.method=='POST':
+        form=UpdateUser(request.POST,instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    form=UpdateUser(instance=request.user)
+    context={'form':form}
+    return render(request,'profile_update.html',context=context)
+
+
 @login_required(login_url='login')
 def DeleteTask(request,pk):
     if request.method=='POST':
@@ -57,7 +81,9 @@ def NewTask(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request,'dashboard.html')
+    profile_pic=Profile.objects.get(user=request.user)
+    context={'profile':profile_pic}
+    return render(request,'dashboard.html',context=context)
 
 def logout_page(request):
     logout(request)
@@ -89,7 +115,10 @@ def register(request):
     if request.method=='POST':
         form=NewUserForm(request.POST)
         if form.is_valid():
+            current_user=form.save(commit=False)
             form.save()
+            profile=Profile.objects.get(user=current_user)
+            messages.success(request,"User registration was successful!")
             return redirect('login')
     form=NewUserForm()
     context={'form':form}
