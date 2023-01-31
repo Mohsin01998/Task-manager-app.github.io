@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Task
+from .models import Task, Profile
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -81,9 +81,7 @@ def NewTask(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    profile_pic=Profile.objects.get(user=request.user)
-    context={'profile':profile_pic}
-    return render(request,'dashboard.html',context=context)
+    return render(request,'dashboard.html')
 
 def logout_page(request):
     logout(request)
@@ -117,7 +115,6 @@ def register(request):
         if form.is_valid():
             current_user=form.save(commit=False)
             form.save()
-            profile=Profile.objects.get(user=current_user)
             messages.success(request,"User registration was successful!")
             return redirect('login')
     form=NewUserForm()
